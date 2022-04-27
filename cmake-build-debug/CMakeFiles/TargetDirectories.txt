@@ -1,0 +1,3 @@
+/Users/tianjiaye/CLionProjects/pthread/cmake-build-debug/CMakeFiles/rebuild_cache.dir
+/Users/tianjiaye/CLionProjects/pthread/cmake-build-debug/CMakeFiles/edit_cache.dir
+/Users/tianjiaye/CLionProjects/pthread/cmake-build-debug/CMakeFiles/pthread.dir
