@@ -42,6 +42,17 @@ include CMakeFiles/rules.ninja
 cmake_ninja_workdir = /Users/tianjiaye/CLionProjects/pthread/cmake-build-debug/
 
 #############################################
+# Utility command for edit_cache
+
+build CMakeFiles/edit_cache.util: CUSTOM_COMMAND
+  COMMAND = cd /Users/tianjiaye/CLionProjects/pthread/cmake-build-debug && /Applications/CLion.app/Contents/bin/cmake/mac/bin/cmake -E echo No\ interactive\ CMake\ dialog\ available.
+  DESC = No interactive CMake dialog available...
+  restat = 1
+
+build edit_cache: phony CMakeFiles/edit_cache.util
+
+
+#############################################
 # Utility command for rebuild_cache
 
 build CMakeFiles/rebuild_cache.util: CUSTOM_COMMAND
@@ -52,47 +63,160 @@ build CMakeFiles/rebuild_cache.util: CUSTOM_COMMAND
 
 build rebuild_cache: phony CMakeFiles/rebuild_cache.util
 
-
-#############################################
-# Utility command for edit_cache
-
-build CMakeFiles/edit_cache.util: CUSTOM_COMMAND
-  COMMAND = cd /Users/tianjiaye/CLionProjects/pthread/cmake-build-debug && /Applications/CLion.app/Contents/bin/cmake/mac/bin/cmake -E echo No\ interactive\ CMake\ dialog\ available.
-  DESC = No interactive CMake dialog available...
-  restat = 1
-
-build edit_cache: phony CMakeFiles/edit_cache.util
-
 # =============================================================================
-# Object build statements for EXECUTABLE target pthread
+# Object build statements for EXECUTABLE target simplified_Adp
 
 
 #############################################
-# Order-only phony target for pthread
+# Order-only phony target for simplified_Adp
 
-build cmake_object_order_depends_target_pthread: phony || CMakeFiles/pthread.dir
+build cmake_object_order_depends_target_simplified_Adp: phony || CMakeFiles/simplified_Adp.dir
 
-build CMakeFiles/pthread.dir/main.cpp.o: CXX_COMPILER__pthread_Debug /Users/tianjiaye/CLionProjects/pthread/main.cpp || cmake_object_order_depends_target_pthread
-  DEP_FILE = CMakeFiles/pthread.dir/main.cpp.o.d
+build CMakeFiles/simplified_Adp.dir/serial/simplified_Adp.cpp.o: CXX_COMPILER__simplified_Adp_Debug /Users/tianjiaye/CLionProjects/pthread/serial/simplified_Adp.cpp || cmake_object_order_depends_target_simplified_Adp
+  DEP_FILE = CMakeFiles/simplified_Adp.dir/serial/simplified_Adp.cpp.o.d
   FLAGS = -g -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX12.3.sdk -std=gnu++14
-  OBJECT_DIR = CMakeFiles/pthread.dir
-  OBJECT_FILE_DIR = CMakeFiles/pthread.dir
+  OBJECT_DIR = CMakeFiles/simplified_Adp.dir
+  OBJECT_FILE_DIR = CMakeFiles/simplified_Adp.dir/serial
 
 
 # =============================================================================
-# Link build statements for EXECUTABLE target pthread
+# Link build statements for EXECUTABLE target simplified_Adp
 
 
 #############################################
-# Link the executable pthread
+# Link the executable simplified_Adp
 
-build pthread: CXX_EXECUTABLE_LINKER__pthread_Debug CMakeFiles/pthread.dir/main.cpp.o
+build simplified_Adp: CXX_EXECUTABLE_LINKER__simplified_Adp_Debug CMakeFiles/simplified_Adp.dir/serial/simplified_Adp.cpp.o
   FLAGS = -g -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX12.3.sdk
-  OBJECT_DIR = CMakeFiles/pthread.dir
+  OBJECT_DIR = CMakeFiles/simplified_Adp.dir
   POST_BUILD = :
   PRE_LINK = :
-  TARGET_FILE = pthread
-  TARGET_PDB = pthread.dbg
+  TARGET_FILE = simplified_Adp
+  TARGET_PDB = simplified_Adp.dbg
+
+# =============================================================================
+# Object build statements for EXECUTABLE target sequential
+
+
+#############################################
+# Order-only phony target for sequential
+
+build cmake_object_order_depends_target_sequential: phony || CMakeFiles/sequential.dir
+
+build CMakeFiles/sequential.dir/serial/sequential.cpp.o: CXX_COMPILER__sequential_Debug /Users/tianjiaye/CLionProjects/pthread/serial/sequential.cpp || cmake_object_order_depends_target_sequential
+  DEP_FILE = CMakeFiles/sequential.dir/serial/sequential.cpp.o.d
+  FLAGS = -g -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX12.3.sdk -std=gnu++14
+  OBJECT_DIR = CMakeFiles/sequential.dir
+  OBJECT_FILE_DIR = CMakeFiles/sequential.dir/serial
+
+
+# =============================================================================
+# Link build statements for EXECUTABLE target sequential
+
+
+#############################################
+# Link the executable sequential
+
+build sequential: CXX_EXECUTABLE_LINKER__sequential_Debug CMakeFiles/sequential.dir/serial/sequential.cpp.o
+  FLAGS = -g -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX12.3.sdk
+  OBJECT_DIR = CMakeFiles/sequential.dir
+  POST_BUILD = :
+  PRE_LINK = :
+  TARGET_FILE = sequential
+  TARGET_PDB = sequential.dbg
+
+# =============================================================================
+# Object build statements for EXECUTABLE target parallel_all_queries
+
+
+#############################################
+# Order-only phony target for parallel_all_queries
+
+build cmake_object_order_depends_target_parallel_all_queries: phony || CMakeFiles/parallel_all_queries.dir
+
+build CMakeFiles/parallel_all_queries.dir/parallel_all_queries/parallel_all_queries.cpp.o: CXX_COMPILER__parallel_all_queries_Debug /Users/tianjiaye/CLionProjects/pthread/parallel_all_queries/parallel_all_queries.cpp || cmake_object_order_depends_target_parallel_all_queries
+  DEP_FILE = CMakeFiles/parallel_all_queries.dir/parallel_all_queries/parallel_all_queries.cpp.o.d
+  FLAGS = -g -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX12.3.sdk -std=gnu++14
+  OBJECT_DIR = CMakeFiles/parallel_all_queries.dir
+  OBJECT_FILE_DIR = CMakeFiles/parallel_all_queries.dir/parallel_all_queries
+
+
+# =============================================================================
+# Link build statements for EXECUTABLE target parallel_all_queries
+
+
+#############################################
+# Link the executable parallel_all_queries
+
+build parallel_all_queries: CXX_EXECUTABLE_LINKER__parallel_all_queries_Debug CMakeFiles/parallel_all_queries.dir/parallel_all_queries/parallel_all_queries.cpp.o
+  FLAGS = -g -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX12.3.sdk
+  OBJECT_DIR = CMakeFiles/parallel_all_queries.dir
+  POST_BUILD = :
+  PRE_LINK = :
+  TARGET_FILE = parallel_all_queries
+  TARGET_PDB = parallel_all_queries.dbg
+
+# =============================================================================
+# Object build statements for EXECUTABLE target Max_successor
+
+
+#############################################
+# Order-only phony target for Max_successor
+
+build cmake_object_order_depends_target_Max_successor: phony || CMakeFiles/Max_successor.dir
+
+build CMakeFiles/Max_successor.dir/serial/max_successor.cpp.o: CXX_COMPILER__Max_successor_Debug /Users/tianjiaye/CLionProjects/pthread/serial/max_successor.cpp || cmake_object_order_depends_target_Max_successor
+  DEP_FILE = CMakeFiles/Max_successor.dir/serial/max_successor.cpp.o.d
+  FLAGS = -g -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX12.3.sdk -std=gnu++14
+  OBJECT_DIR = CMakeFiles/Max_successor.dir
+  OBJECT_FILE_DIR = CMakeFiles/Max_successor.dir/serial
+
+
+# =============================================================================
+# Link build statements for EXECUTABLE target Max_successor
+
+
+#############################################
+# Link the executable Max_successor
+
+build Max_successor: CXX_EXECUTABLE_LINKER__Max_successor_Debug CMakeFiles/Max_successor.dir/serial/max_successor.cpp.o
+  FLAGS = -g -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX12.3.sdk
+  OBJECT_DIR = CMakeFiles/Max_successor.dir
+  POST_BUILD = :
+  PRE_LINK = :
+  TARGET_FILE = Max_successor
+  TARGET_PDB = Max_successor.dbg
+
+# =============================================================================
+# Object build statements for EXECUTABLE target parallel_finding_key_elements
+
+
+#############################################
+# Order-only phony target for parallel_finding_key_elements
+
+build cmake_object_order_depends_target_parallel_finding_key_elements: phony || CMakeFiles/parallel_finding_key_elements.dir
+
+build CMakeFiles/parallel_finding_key_elements.dir/parallel_all_queries/parallel_finding_key_elements.cpp.o: CXX_COMPILER__parallel_finding_key_elements_Debug /Users/tianjiaye/CLionProjects/pthread/parallel_all_queries/parallel_finding_key_elements.cpp || cmake_object_order_depends_target_parallel_finding_key_elements
+  DEP_FILE = CMakeFiles/parallel_finding_key_elements.dir/parallel_all_queries/parallel_finding_key_elements.cpp.o.d
+  FLAGS = -g -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX12.3.sdk -std=gnu++14
+  OBJECT_DIR = CMakeFiles/parallel_finding_key_elements.dir
+  OBJECT_FILE_DIR = CMakeFiles/parallel_finding_key_elements.dir/parallel_all_queries
+
+
+# =============================================================================
+# Link build statements for EXECUTABLE target parallel_finding_key_elements
+
+
+#############################################
+# Link the executable parallel_finding_key_elements
+
+build parallel_finding_key_elements: CXX_EXECUTABLE_LINKER__parallel_finding_key_elements_Debug CMakeFiles/parallel_finding_key_elements.dir/parallel_all_queries/parallel_finding_key_elements.cpp.o
+  FLAGS = -g -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX12.3.sdk
+  OBJECT_DIR = CMakeFiles/parallel_finding_key_elements.dir
+  POST_BUILD = :
+  PRE_LINK = :
+  TARGET_FILE = parallel_finding_key_elements
+  TARGET_PDB = parallel_finding_key_elements.dbg
 
 # =============================================================================
 # Target aliases.
@@ -105,7 +229,7 @@ build pthread: CXX_EXECUTABLE_LINKER__pthread_Debug CMakeFiles/pthread.dir/main.
 #############################################
 # Folder: /Users/tianjiaye/CLionProjects/pthread/cmake-build-debug
 
-build all: phony pthread
+build all: phony simplified_Adp sequential parallel_all_queries Max_successor parallel_finding_key_elements
 
 # =============================================================================
 # Built-in targets

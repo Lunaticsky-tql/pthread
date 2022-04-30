@@ -3,7 +3,7 @@
 //
 
 #include <ctime>
-
+using namespace std;
 #ifndef PTHREAD_TIMER_H
 #define PTHREAD_TIMER_H
 
@@ -27,9 +27,9 @@ public:
         timespec_get(&ets, TIME_UTC);
     }
 
-    double get_time() {
+    void get_duration(const string& str) {
         // get the time span (in milliseconds)
         timeMS = (ets.tv_sec - sts.tv_sec) * 1000.0 + (ets.tv_nsec - sts.tv_nsec) / 1000000.0;
-        return timeMS;
+        printf("%s: %f ms\n", str.c_str(), timeMS);
     }
 };

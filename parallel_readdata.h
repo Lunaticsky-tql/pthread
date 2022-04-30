@@ -1,0 +1,8 @@
+//
+// Created by 田佳业 on 2022/4/30.
+//
+
+#ifndef PTHREAD_PARALLEL_READDATA_H
+#define PTHREAD_PARALLEL_READDATA_H
+
+#endif //PTHREAD_PARALLEL_READDATA_H

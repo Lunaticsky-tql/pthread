@@ -5,6 +5,7 @@
 #include <cstdio>
 #include <cstdlib>
 #include <vector>
+#include "./timer.h"
 using namespace std;
 
 #ifndef PTHREAD_READDATA_H
@@ -20,6 +21,8 @@ const int POSTING_LIST_NUM = 1756;
 int posting_list_counter, query_list_count;
 FILE *fi;
 FILE *fq;
+MyTimer time_read_posting_list;
+
 
 vector<int> to_int_list(char *line) {
     vector<int> int_list;
@@ -41,6 +44,7 @@ vector<int> to_int_list(char *line) {
 
 int read_posting_list(struct POSTING_LIST* posting_list_container) {
 
+    time_read_posting_list.start();
     unsigned int array_len;
     unsigned int *temp_arr;
     fi = fopen("/Users/tianjiaye/CLionProjects/SIMD/ExpIndex", "rb");
@@ -70,6 +74,8 @@ int read_posting_list(struct POSTING_LIST* posting_list_container) {
 
     }
     fclose(fi);
+    time_read_posting_list.finish();
+    time_read_posting_list.get_duration("read_posting_list");
     return 0;
 }
 
@@ -87,6 +93,5 @@ int read_query_list(vector<vector<int> > &query_list_container) {
         query_list_count++;
     }
     fclose(fq);
-    printf("query_list num: %d\n", query_list_count);
     return 0;
 }

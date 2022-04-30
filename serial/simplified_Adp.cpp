@@ -1,11 +1,11 @@
 #include <iostream>
-#include "readdata.h"
-#include "timer.h"
+#include "../readdata.h"
+#include "../timer.h"
 
 using namespace std;
 POSTING_LIST *posting_list_container = (struct POSTING_LIST *) malloc(POSTING_LIST_NUM * sizeof(struct POSTING_LIST));
 vector<vector<int> > query_list_container;
-MyTimer timer;
+MyTimer time_get_posting_list;
 
 int QueryNum = 500;
 
@@ -40,7 +40,7 @@ int binary_search_with_position(POSTING_LIST *list, unsigned int element, int in
     return low;
 }
 
-void simplified_Adp(POSTING_LIST *queried_posting_list, int query_word_num, vector<unsigned int> &result_list) {
+void max_successor(POSTING_LIST *queried_posting_list, int query_word_num, vector<unsigned int> &result_list) {
 
     //start with sorting the posting list to find the shortest one
     int *sorted_index = new int[query_word_num];
@@ -75,7 +75,7 @@ void simplified_Adp(POSTING_LIST *queried_posting_list, int query_word_num, vect
 
 void query_starter(vector<vector<unsigned int>> &simplified_Adp_result) {
 
-    timer.start();
+    time_get_posting_list.start();
     for (int i = 0; i < QueryNum; i++) {
         int query_word_num = query_list_container[i].size();
         //get the posting list of ith query
@@ -86,12 +86,12 @@ void query_starter(vector<vector<unsigned int>> &simplified_Adp_result) {
         }
         //get the result of ith query
         vector<unsigned int> simplified_Adp_result_list;
-        simplified_Adp(queried_posting_list, query_word_num, simplified_Adp_result_list);
+        max_successor(queried_posting_list, query_word_num, simplified_Adp_result_list);
         simplified_Adp_result.push_back(simplified_Adp_result_list);
         simplified_Adp_result_list.clear();
         delete[] queried_posting_list;
     }
-    timer.finish();
+    time_get_posting_list.finish();
 }
 
 int main() {
@@ -101,20 +101,19 @@ int main() {
         free(posting_list_container);
         return -1;
     } else {
-
+        printf("query_num: %d\n", QueryNum);
         vector<vector<unsigned int>> simplified_Adp_result;
         query_starter(simplified_Adp_result);
         for (int j = 0; j < 5; ++j) {
             printf("result %d: ", j);
-            printf("%d\n", simplified_Adp_result[j].size());
+            printf("%zu\n", simplified_Adp_result[j].size());
             for (int k = 0; k < simplified_Adp_result[j].size(); ++k) {
                 printf("%d ", simplified_Adp_result[j][k]);
             }
             printf("\n");
         }
-        printf("time: %f\n", timer.get_time());
+        time_get_posting_list.get_duration("max_successor plain");
         free(posting_list_container);
         return 0;
     }
-
 }
