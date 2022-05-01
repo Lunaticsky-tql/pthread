@@ -1,23 +1,25 @@
 #include <iostream>
 #include "../readdata.h"
-#include<pthread.h>
-#include "../timer.h"
+//using ptread to parallel the process of finding the key elements
 
 using namespace std;
 POSTING_LIST *posting_list_container = (struct POSTING_LIST *) malloc(POSTING_LIST_NUM * sizeof(struct POSTING_LIST));
 vector<vector<int> > query_list_container;
-MyTimer time_get_posting_list;
+MyTimer time_get_intersection;
 
 int QueryNum = 500;
 const int THREAD_NUM = 8;
 typedef struct {
-    int threadID;
-    int section;
+
+    int thread_id;
+    POSTING_LIST *list;
     int query_word_num;
-    POSTING_LIST *queried_posting_list;
-} threadParm_t;
+    int *sorted_index;
+    int finding_elements;
+    int start_pos;
+} block_Parm;
 pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;
-vector<vector<unsigned int>> simplified_Adp_result(QueryNum);
+vector<vector<unsigned int>> temp_result_list(THREAD_NUM);
 
 void get_sorted_index(POSTING_LIST *queried_posting_list, int query_word_num, int *sorted_index) {
 
@@ -36,7 +38,7 @@ void get_sorted_index(POSTING_LIST *queried_posting_list, int query_word_num, in
 }
 
 int binary_search_with_position(POSTING_LIST *list, unsigned int element, int index) {
-    //如果找到返回该元素位置，否则返回不小于它的第一个元素的位置
+    //If found, return the position of the element; otherwise, return the position not less than its first element
     int low = index, high = list->len - 1, mid;
     while (low <= high) {
         mid = (low + high) / 2;
@@ -50,106 +52,96 @@ int binary_search_with_position(POSTING_LIST *list, unsigned int element, int in
     return low;
 }
 
-void max_successor(POSTING_LIST *queried_posting_list, int query_word_num, vector<unsigned int> &result_list) {
+void *parallel_finding_element(void *task) {
+    int thread_id = ((block_Parm *) task)->thread_id;
+    POSTING_LIST *list = ((block_Parm *) task)->list;
+    int query_word_num = ((block_Parm *) task)->query_word_num;
+    int *sorted_index = ((block_Parm *) task)->sorted_index;
+    int finding_elements = ((block_Parm *) task)->finding_elements;
+    int start_pos= ((block_Parm *) task)->start_pos;
+    vector<int> finding_pointer(query_word_num, 0);
+    vector<unsigned int> result_in_thread;
+    bool flag;
+    unsigned int k_element;
+    for(int k=start_pos;k<start_pos+finding_elements;k++){
+        flag= true;
+        k_element = list[sorted_index[0]].arr[k];
+        for(int m=1;m<query_word_num;m++){
+            int mth_short=sorted_index[m];
+            POSTING_LIST searching_list=list[mth_short];
+            int pos=binary_search_with_position(&searching_list,k_element,finding_pointer[mth_short]);
+            if(pos>=searching_list.len||searching_list.arr[pos]!=k_element){
+                flag=false;
+                break;
+            }
+            finding_pointer[mth_short]=pos;
+
+        }
+        if(flag){
+            result_in_thread.push_back(k_element);
+        }
+    }
+    pthread_mutex_lock(&mutex);
+    temp_result_list[thread_id]=result_in_thread;
+    pthread_mutex_unlock(&mutex);
+    pthread_exit(nullptr);
+
+}
+
+void parallel_sAdp(POSTING_LIST *queried_posting_list, int query_word_num, vector<unsigned int> &result_list) {
 
     //start with sorting the posting list to find the shortest one
     int *sorted_index = new int[query_word_num];
     get_sorted_index(queried_posting_list, query_word_num, sorted_index);
-    bool flag;
-    unsigned int key_element;
-    vector<int> finding_pointer(query_word_num, 0);
-    for (int k = 0; k < queried_posting_list[sorted_index[0]].len; k++) {
-        flag = true;
-        key_element = queried_posting_list[sorted_index[0]].arr[k];
-        for (int m = 1; m < query_word_num; m++) {
-            int mth_short = sorted_index[m];
-            POSTING_LIST searching_list = queried_posting_list[mth_short];
-            //if the key element is larger than the end element of a list ,it means any element larger than the key element can not be the intersection
-            if (key_element > searching_list.arr[searching_list.len - 1]) {
-                goto end;
-            }
-            int location = binary_search_with_position(&queried_posting_list[mth_short], key_element,
-                                                       finding_pointer[sorted_index[m]]);
-            if (searching_list.arr[location] != key_element) {
-                flag = false;
-                break;
-            }
-            finding_pointer[mth_short] = location;
-        }
-        if (flag) {
-            result_list.push_back(key_element);
-        }
-    }
-    end: delete[] sorted_index;
-}
-
-void* simplified_Adp_thread(void *parm)
-{
-
-    int threadID = ((threadParm_t *)parm)->threadID;
-    int section = ((threadParm_t *)parm)->section;
-    int query_word_num = ((threadParm_t *)parm)->query_word_num;
-    POSTING_LIST *queried_posting_list = ((threadParm_t *)parm)->queried_posting_list;
-    vector<unsigned int> result_list;
-    max_successor(queried_posting_list, query_word_num, result_list);
-    pthread_mutex_lock(&mutex);
-    simplified_Adp_result[section+threadID] = result_list;
-    pthread_mutex_unlock(&mutex);
-    pthread_exit(nullptr);
-}
-
-
-
-
-void query_starter() {
-
-    time_get_posting_list.start();
-//    for (int i = 0; i < QueryNum; i++) {
-//        int query_word_num = query_list_container[i].size();
-//        //get the posting list of ith query
-//        auto *queried_posting_list = new POSTING_LIST[query_word_num];
-//        for (int j = 0; j < query_word_num; j++) {
-//            int query_list_item = query_list_container[i][j];
-//            queried_posting_list[j] = posting_list_container[query_list_item];
-//        }
-//        //get the result of ith query
-//        vector<unsigned int> simplified_Adp_result_list;
-//        max_successor(queried_posting_list, query_word_num, simplified_Adp_result_list);
-//        simplified_Adp_result.push_back(simplified_Adp_result_list);
-//        simplified_Adp_result_list.clear();
-//        delete[] queried_posting_list;
-//    }
-
-// parting the query task into 8 parts and use 8 threads each time to do the total tasks.
+// divide the elements needs to find int the first list into THREAD_NUM parts
     pthread_t thread[THREAD_NUM];
-    threadParm_t threadParm[THREAD_NUM];
-    int numThreads;
-    for (int section=0;section<QueryNum;section+=THREAD_NUM)
+    block_Parm threadParm[THREAD_NUM];
+    int num_elements=queried_posting_list[sorted_index[0]].len;
+    int elements_per_thread=num_elements/THREAD_NUM;
+    int num_element_per_round;
+    for(int section=0;section<THREAD_NUM;section++)
     {
-        if(section + THREAD_NUM <= QueryNum)
-        {
-            numThreads = THREAD_NUM;
-        }else {
-            numThreads = QueryNum - section;
-        }
-        for (int i = 0; i < numThreads; i++) {
-            threadParm[i].threadID = i;
-            threadParm[i].section = section;
-            threadParm[i].query_word_num = query_list_container[section + i].size();
-            threadParm[i].queried_posting_list = new POSTING_LIST[threadParm[i].query_word_num];
-            for (int j = 0; j < threadParm[i].query_word_num; j++) {
-                int query_list_item = query_list_container[section + i][j];
-                threadParm[i].queried_posting_list[j] = posting_list_container[query_list_item];
-            }
-            pthread_create(&thread[i], nullptr, simplified_Adp_thread, (void *) &threadParm[i]);
-        }
-        for(int i = 0; i < numThreads; i++)
-        {
-            pthread_join(thread[i], nullptr);
-        }
+        if(section==THREAD_NUM-1)
+            num_element_per_round=num_elements-elements_per_thread*section;
+        else
+            num_element_per_round=elements_per_thread;
+        threadParm[section].thread_id=section;
+        threadParm[section].list=queried_posting_list;
+        threadParm[section].query_word_num=query_word_num;
+        threadParm[section].sorted_index=sorted_index;
+        threadParm[section].finding_elements=num_element_per_round;
+        threadParm[section].start_pos=elements_per_thread*section;
+        pthread_create(&thread[section],nullptr,&parallel_finding_element,(void*)&threadParm[section]);
     }
+    for(auto & section : thread)
+    {
+        pthread_join(section,nullptr);
+    }
+    for(int i=0;i<THREAD_NUM;i++)
+    {
+        result_list.insert(result_list.end(),temp_result_list[i].begin(),temp_result_list[i].end());
+    }
+}
 
-    time_get_posting_list.finish();
+void query_starter(vector<vector<unsigned int>> &simplified_Adp_result) {
+
+    time_get_intersection.start();
+    for (int i = 0; i < QueryNum; i++) {
+        int query_word_num = query_list_container[i].size();
+        //get the posting list of ith query
+        auto *queried_posting_list = new POSTING_LIST[query_word_num];
+        for (int j = 0; j < query_word_num; j++) {
+            int query_list_item = query_list_container[i][j];
+            queried_posting_list[j] = posting_list_container[query_list_item];
+        }
+        //get the result of ith query
+        vector<unsigned int> simplified_Adp_result_list;
+        parallel_sAdp(queried_posting_list, query_word_num, simplified_Adp_result_list);
+        simplified_Adp_result.push_back(simplified_Adp_result_list);
+        simplified_Adp_result_list.clear();
+        delete[] queried_posting_list;
+    }
+    time_get_intersection.finish();
 }
 
 int main() {
@@ -160,20 +152,18 @@ int main() {
         return -1;
     } else {
         printf("query_num: %d\n", QueryNum);
-
-        query_starter();
+        vector<vector<unsigned int>> simplified_Adp_result;
+        query_starter(simplified_Adp_result);
         for (int j = 0; j < 5; ++j) {
             printf("result %d: ", j);
             printf("%zu\n", simplified_Adp_result[j].size());
-            for (int k = 0; k < simplified_Adp_result[j].size(); ++k) {
-                printf("%d ", simplified_Adp_result[j][k]);
+            for (unsigned int k : simplified_Adp_result[j]) {
+                printf("%d ", k);
             }
             printf("\n");
         }
-        //parallel all queries
-        time_get_posting_list.get_duration("max_successor paq time");
+        time_get_intersection.get_duration("sequential plain");
         free(posting_list_container);
         return 0;
     }
-
 }

@@ -2,14 +2,11 @@
 // Created by 田佳业 on 2022/4/30.
 //
 #include <iostream>
-#include<cmath>
 #include "../readdata.h"
-#include "../timer.h"
-
 using namespace std;
 POSTING_LIST *posting_list_container = (struct POSTING_LIST *) malloc(POSTING_LIST_NUM * sizeof(struct POSTING_LIST));
 vector<vector<int> > query_list_container;
-MyTimer time_get_posting_list;
+MyTimer time_get_intersection;
 
 int QueryNum = 500;
 
@@ -111,7 +108,7 @@ void max_successor(POSTING_LIST *queried_posting_list, int query_word_num, vecto
 
 void query_starter(vector<vector<unsigned int>> &Max_result) {
 
-    time_get_posting_list.start();
+    time_get_intersection.start();
     for (int i = 0; i < QueryNum; i++) {
         int query_word_num = query_list_container[i].size();
         //get the posting list of ith query
@@ -127,7 +124,7 @@ void query_starter(vector<vector<unsigned int>> &Max_result) {
         Max_result_list.clear();
         delete[] queried_posting_list;
     }
-    time_get_posting_list.finish();
+    time_get_intersection.finish();
 }
 
 int main() {
@@ -148,7 +145,7 @@ int main() {
             }
             printf("\n");
         }
-        time_get_posting_list.get_duration("max_successor plain");
+        time_get_intersection.get_duration("max_successor plain");
         free(posting_list_container);
         return 0;
     }

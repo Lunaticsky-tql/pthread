@@ -1,12 +1,25 @@
+//
+// Created by 田佳业 on 2022/4/30.
+//
+
 #include <iostream>
 #include "../readdata.h"
+#include<pthread.h>
 
 using namespace std;
 POSTING_LIST *posting_list_container = (struct POSTING_LIST *) malloc(POSTING_LIST_NUM * sizeof(struct POSTING_LIST));
-vector<vector<int>> query_list_container;
+vector<vector<int> > query_list_container;
 MyTimer time_get_intersection;
 
 int QueryNum = 500;
+const int THREAD_NUM = 8;
+typedef struct {
+    int threadID;
+    int query_request_num;
+} bundle_parm;
+pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;
+vector<vector<vector<unsigned int>>> simplified_Adp_result(THREAD_NUM);
+int REQUESTS_NUM= QueryNum / THREAD_NUM;
 
 void get_sorted_index(POSTING_LIST *queried_posting_list, int query_word_num, int *sorted_index) {
 
@@ -25,7 +38,8 @@ void get_sorted_index(POSTING_LIST *queried_posting_list, int query_word_num, in
 }
 
 int binary_search_with_position(POSTING_LIST *list, unsigned int element, int index) {
-    //如果找到返回该元素位置，否则返回不小于它的第一个元素的位置
+    //returns the position of the element if found,
+    //otherwise returns the position of the first element not smaller than it
     int low = index, high = list->len - 1, mid;
     while (low <= high) {
         mid = (low + high) / 2;
@@ -39,7 +53,7 @@ int binary_search_with_position(POSTING_LIST *list, unsigned int element, int in
     return low;
 }
 
-void simplified_Adp(POSTING_LIST *queried_posting_list, int query_word_num, vector<unsigned int> &result_list) {
+void simplified_adp(POSTING_LIST *queried_posting_list, int query_word_num, vector<unsigned int> &result_list) {
 
     //start with sorting the posting list to find the shortest one
     int *sorted_index = new int[query_word_num];
@@ -58,7 +72,7 @@ void simplified_Adp(POSTING_LIST *queried_posting_list, int query_word_num, vect
                 goto end;
             }
             int location = binary_search_with_position(&queried_posting_list[mth_short], key_element,
-                                                       finding_pointer[mth_short]);
+                                                       finding_pointer[sorted_index[m]]);
             if (searching_list.arr[location] != key_element) {
                 flag = false;
                 break;
@@ -72,24 +86,54 @@ void simplified_Adp(POSTING_LIST *queried_posting_list, int query_word_num, vect
     end: delete[] sorted_index;
 }
 
-void query_starter(vector<vector<unsigned int>> &simplified_Adp_result) {
-
-    time_get_intersection.start();
-    for (int i = 0; i < QueryNum; i++) {
-        int query_word_num = query_list_container[i].size();
-        //get the posting list of ith query
-        auto *queried_posting_list = new POSTING_LIST[query_word_num];
-        for (int j = 0; j < query_word_num; j++) {
-            int query_list_item = query_list_container[i][j];
-            queried_posting_list[j] = posting_list_container[query_list_item];
+void* block_task(void *task)
+{
+    int threadID = ((bundle_parm *)task)->threadID;
+    int requests_in_task = ((bundle_parm *)task)->query_request_num;
+    int start_index= threadID * REQUESTS_NUM;
+    vector<vector<unsigned int>> task_result_container;
+    for(int i = 0; i < requests_in_task; i++)
+    {
+        int query_word_num = query_list_container[start_index+i].size();
+        POSTING_LIST *queried_posting_list = new POSTING_LIST[query_word_num];
+        for(int j = 0; j < query_word_num; j++)
+        {
+            queried_posting_list[j] = posting_list_container[query_list_container[start_index+i][j]];
         }
-        //get the result of ith query
-        vector<unsigned int> simplified_Adp_result_list;
-        simplified_Adp(queried_posting_list, query_word_num, simplified_Adp_result_list);
-        simplified_Adp_result.push_back(simplified_Adp_result_list);
-        simplified_Adp_result_list.clear();
+        vector<unsigned int> result_list;
+        simplified_adp(queried_posting_list, query_word_num, result_list);
+        task_result_container.push_back(result_list);
+        result_list.clear();
         delete[] queried_posting_list;
     }
+    pthread_mutex_lock(&mutex);
+   simplified_Adp_result[threadID] = task_result_container;
+    pthread_mutex_unlock(&mutex);
+    pthread_exit(nullptr);
+}
+
+
+
+void query_starter() {
+
+    time_get_intersection.start();
+    pthread_t thread[THREAD_NUM];
+    bundle_parm bundle[THREAD_NUM];
+
+    for (int section = 0; section < THREAD_NUM; ++section) {
+        bundle[section].threadID = section;
+        if (section == THREAD_NUM - 1) {
+            bundle[section].query_request_num = QueryNum - section * REQUESTS_NUM;
+        } else {
+            bundle[section].query_request_num = REQUESTS_NUM;
+        }
+        pthread_create(&thread[section], nullptr, block_task, (void *) &bundle[section]);
+        }
+
+    for (auto & child_thread : thread) {
+        pthread_join(child_thread, nullptr);
+    }
+
     time_get_intersection.finish();
 }
 
@@ -101,18 +145,21 @@ int main() {
         return -1;
     } else {
         printf("query_num: %d\n", QueryNum);
-        vector<vector<unsigned int>> simplified_Adp_result;
-        query_starter(simplified_Adp_result);
-        for (int j = 0; j < 5; ++j) {
-            printf("result %d: ", j);
-            printf("%zu\n", simplified_Adp_result[j].size());
-            for (int k = 0; k < simplified_Adp_result[j].size(); ++k) {
-                printf("%d ", simplified_Adp_result[j][k]);
+        query_starter();
+        //print the intersection of first 5 requests
+        for (int i = 0; i < 5; ++i) {
+            printf("request %d: %zu\n", i, simplified_Adp_result[0][i].size());
+            for(int j=0;j<simplified_Adp_result[0][i].size();j++)
+            {
+                printf("%d ", simplified_Adp_result[0][i][j]);
             }
             printf("\n");
         }
-        time_get_intersection.get_duration("simplified_Adp plain");
+
+        //parallel all queries
+        time_get_intersection.get_duration("block_task time");
         free(posting_list_container);
         return 0;
     }
+
 }

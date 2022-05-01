@@ -1,7 +1,8 @@
 /Users/tianjiaye/CLionProjects/pthread/cmake-build-debug/CMakeFiles/edit_cache.dir
+/Users/tianjiaye/CLionProjects/pthread/cmake-build-debug/CMakeFiles/parallel_finding_key_elements.dir
+/Users/tianjiaye/CLionProjects/pthread/cmake-build-debug/CMakeFiles/block_task.dir
+/Users/tianjiaye/CLionProjects/pthread/cmake-build-debug/CMakeFiles/group_parallel.dir
+/Users/tianjiaye/CLionProjects/pthread/cmake-build-debug/CMakeFiles/sequential.dir
+/Users/tianjiaye/CLionProjects/pthread/cmake-build-debug/CMakeFiles/max_successor.dir
 /Users/tianjiaye/CLionProjects/pthread/cmake-build-debug/CMakeFiles/rebuild_cache.dir
 /Users/tianjiaye/CLionProjects/pthread/cmake-build-debug/CMakeFiles/simplified_Adp.dir
-/Users/tianjiaye/CLionProjects/pthread/cmake-build-debug/CMakeFiles/sequential.dir
-/Users/tianjiaye/CLionProjects/pthread/cmake-build-debug/CMakeFiles/parallel_all_queries.dir
-/Users/tianjiaye/CLionProjects/pthread/cmake-build-debug/CMakeFiles/Max_successor.dir
-/Users/tianjiaye/CLionProjects/pthread/cmake-build-debug/CMakeFiles/parallel_finding_key_elements.dir

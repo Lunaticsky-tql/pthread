@@ -22,6 +22,7 @@ int posting_list_counter, query_list_count;
 FILE *fi;
 FILE *fq;
 MyTimer time_read_posting_list;
+MyTimer time_read_query_list;
 
 
 vector<int> to_int_list(char *line) {
@@ -80,6 +81,7 @@ int read_posting_list(struct POSTING_LIST* posting_list_container) {
 }
 
 int read_query_list(vector<vector<int> > &query_list_container) {
+    time_read_query_list.start();
     fq = fopen("/Users/tianjiaye/CLionProjects/SIMD/ExpQuery", "r");
     if (nullptr == fq) {
         printf("Can not open file ExpQuery!\n");
@@ -93,5 +95,7 @@ int read_query_list(vector<vector<int> > &query_list_container) {
         query_list_count++;
     }
     fclose(fq);
+    time_read_query_list.finish();
+    time_read_query_list.get_duration("read_query_list");
     return 0;
 }

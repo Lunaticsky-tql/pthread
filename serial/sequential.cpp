@@ -3,12 +3,11 @@
 //
 #include <iostream>
 #include "../readdata.h"
-#include "../timer.h"
 
 using namespace std;
 POSTING_LIST *posting_list_container = (struct POSTING_LIST *) malloc(POSTING_LIST_NUM * sizeof(struct POSTING_LIST));
 vector<vector<int> > query_list_container;
-MyTimer time_get_posting_list;
+MyTimer time_get_intersection;
 
 int QueryNum = 500;
 
@@ -43,7 +42,7 @@ int binary_search_with_position(POSTING_LIST *list, unsigned int element, int in
     return low;
 }
 
-void max_successor(POSTING_LIST *queried_posting_list, int query_word_num, vector<unsigned int> &result_list) {
+void sequential(POSTING_LIST *queried_posting_list, int query_word_num, vector<unsigned int> &result_list) {
 
     //get the key element from the list which just failed to find in the binary search each time
     //start with sorting the posting list to find the shortest one
@@ -97,7 +96,7 @@ void max_successor(POSTING_LIST *queried_posting_list, int query_word_num, vecto
 
 void query_starter(vector<vector<unsigned int>> &Seq_result) {
 
-    time_get_posting_list.start();
+    time_get_intersection.start();
     for (int i = 0; i < QueryNum; i++) {
         int query_word_num = query_list_container[i].size();
         //get the posting list of ith query
@@ -108,12 +107,12 @@ void query_starter(vector<vector<unsigned int>> &Seq_result) {
         }
         //get the result of ith query
         vector<unsigned int> Seq_result_list;
-        max_successor(queried_posting_list, query_word_num, Seq_result_list);
+        sequential(queried_posting_list, query_word_num, Seq_result_list);
         Seq_result.push_back(Seq_result_list);
         Seq_result_list.clear();
         delete[] queried_posting_list;
     }
-    time_get_posting_list.finish();
+    time_get_intersection.finish();
 }
 
 int main() {
@@ -134,7 +133,7 @@ int main() {
             }
             printf("\n");
         }
-        time_get_posting_list.get_duration("max_successor plain");
+        time_get_intersection.get_duration("sequential plain");
         free(posting_list_container);
         return 0;
     }
