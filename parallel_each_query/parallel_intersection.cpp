@@ -19,7 +19,7 @@ typedef struct {
     int start_pos;
 } block_Parm;
 pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;
-vector<vector<unsigned int>> temp_result_list(THREAD_NUM);
+vector<vector<unsigned int>> temp_result_list(THREAD_NUM, vector<unsigned int>());
 
 void get_sorted_index(POSTING_LIST *queried_posting_list, int query_word_num, int *sorted_index) {
 

@@ -52,6 +52,37 @@ build CMakeFiles/edit_cache.util: CUSTOM_COMMAND
 build edit_cache: phony CMakeFiles/edit_cache.util
 
 # =============================================================================
+# Object build statements for EXECUTABLE target early_stop
+
+
+#############################################
+# Order-only phony target for early_stop
+
+build cmake_object_order_depends_target_early_stop: phony || CMakeFiles/early_stop.dir
+
+build CMakeFiles/early_stop.dir/parallel_each_query/early_stop.cpp.o: CXX_COMPILER__early_stop_Debug /Users/tianjiaye/CLionProjects/pthread/parallel_each_query/early_stop.cpp || cmake_object_order_depends_target_early_stop
+  DEP_FILE = CMakeFiles/early_stop.dir/parallel_each_query/early_stop.cpp.o.d
+  FLAGS = -g -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX12.3.sdk -std=gnu++14
+  OBJECT_DIR = CMakeFiles/early_stop.dir
+  OBJECT_FILE_DIR = CMakeFiles/early_stop.dir/parallel_each_query
+
+
+# =============================================================================
+# Link build statements for EXECUTABLE target early_stop
+
+
+#############################################
+# Link the executable early_stop
+
+build early_stop: CXX_EXECUTABLE_LINKER__early_stop_Debug CMakeFiles/early_stop.dir/parallel_each_query/early_stop.cpp.o
+  FLAGS = -g -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX12.3.sdk
+  OBJECT_DIR = CMakeFiles/early_stop.dir
+  POST_BUILD = :
+  PRE_LINK = :
+  TARGET_FILE = early_stop
+  TARGET_PDB = early_stop.dbg
+
+# =============================================================================
 # Object build statements for EXECUTABLE target parallel_finding_key_elements
 
 
@@ -60,11 +91,17 @@ build edit_cache: phony CMakeFiles/edit_cache.util
 
 build cmake_object_order_depends_target_parallel_finding_key_elements: phony || CMakeFiles/parallel_finding_key_elements.dir
 
-build CMakeFiles/parallel_finding_key_elements.dir/parallel_all_queries/parallel_finding_key_elements.cpp.o: CXX_COMPILER__parallel_finding_key_elements_Debug /Users/tianjiaye/CLionProjects/pthread/parallel_all_queries/parallel_finding_key_elements.cpp || cmake_object_order_depends_target_parallel_finding_key_elements
-  DEP_FILE = CMakeFiles/parallel_finding_key_elements.dir/parallel_all_queries/parallel_finding_key_elements.cpp.o.d
+build CMakeFiles/parallel_finding_key_elements.dir/parallel_each_query/parallel_intersection.cpp.o: CXX_COMPILER__parallel_finding_key_elements_Debug /Users/tianjiaye/CLionProjects/pthread/parallel_each_query/parallel_intersection.cpp || cmake_object_order_depends_target_parallel_finding_key_elements
+  DEP_FILE = CMakeFiles/parallel_finding_key_elements.dir/parallel_each_query/parallel_intersection.cpp.o.d
   FLAGS = -g -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX12.3.sdk -std=gnu++14
   OBJECT_DIR = CMakeFiles/parallel_finding_key_elements.dir
-  OBJECT_FILE_DIR = CMakeFiles/parallel_finding_key_elements.dir/parallel_all_queries
+  OBJECT_FILE_DIR = CMakeFiles/parallel_finding_key_elements.dir/parallel_each_query
+
+build CMakeFiles/parallel_finding_key_elements.dir/parallel_each_query/early_stop.cpp.o: CXX_COMPILER__parallel_finding_key_elements_Debug /Users/tianjiaye/CLionProjects/pthread/parallel_each_query/early_stop.cpp || cmake_object_order_depends_target_parallel_finding_key_elements
+  DEP_FILE = CMakeFiles/parallel_finding_key_elements.dir/parallel_each_query/early_stop.cpp.o.d
+  FLAGS = -g -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX12.3.sdk -std=gnu++14
+  OBJECT_DIR = CMakeFiles/parallel_finding_key_elements.dir
+  OBJECT_FILE_DIR = CMakeFiles/parallel_finding_key_elements.dir/parallel_each_query
 
 
 # =============================================================================
@@ -74,7 +111,7 @@ build CMakeFiles/parallel_finding_key_elements.dir/parallel_all_queries/parallel
 #############################################
 # Link the executable parallel_finding_key_elements
 
-build parallel_finding_key_elements: CXX_EXECUTABLE_LINKER__parallel_finding_key_elements_Debug CMakeFiles/parallel_finding_key_elements.dir/parallel_all_queries/parallel_finding_key_elements.cpp.o
+build parallel_finding_key_elements: CXX_EXECUTABLE_LINKER__parallel_finding_key_elements_Debug CMakeFiles/parallel_finding_key_elements.dir/parallel_each_query/parallel_intersection.cpp.o CMakeFiles/parallel_finding_key_elements.dir/parallel_each_query/early_stop.cpp.o
   FLAGS = -g -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX12.3.sdk
   OBJECT_DIR = CMakeFiles/parallel_finding_key_elements.dir
   POST_BUILD = :
@@ -260,7 +297,7 @@ build simplified_Adp: CXX_EXECUTABLE_LINKER__simplified_Adp_Debug CMakeFiles/sim
 #############################################
 # Folder: /Users/tianjiaye/CLionProjects/pthread/cmake-build-debug
 
-build all: phony parallel_finding_key_elements block_task group_parallel sequential max_successor simplified_Adp
+build all: phony early_stop parallel_finding_key_elements block_task group_parallel sequential max_successor simplified_Adp
 
 # =============================================================================
 # Built-in targets

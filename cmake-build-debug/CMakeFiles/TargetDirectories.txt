@@ -1,4 +1,5 @@
 /Users/tianjiaye/CLionProjects/pthread/cmake-build-debug/CMakeFiles/edit_cache.dir
+/Users/tianjiaye/CLionProjects/pthread/cmake-build-debug/CMakeFiles/early_stop.dir
 /Users/tianjiaye/CLionProjects/pthread/cmake-build-debug/CMakeFiles/parallel_finding_key_elements.dir
 /Users/tianjiaye/CLionProjects/pthread/cmake-build-debug/CMakeFiles/block_task.dir
 /Users/tianjiaye/CLionProjects/pthread/cmake-build-debug/CMakeFiles/group_parallel.dir
